@@ -5,7 +5,6 @@ on:
 jobs:
   login:
     runs-on: ubuntu-latest
-    container: golang:latest
     steps:
       -
         name: Login to Docker Hub
@@ -13,3 +12,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Install PostgreSQL client
+        run: |
+          apt-get update
+          apt-get install -y postgresql-client
