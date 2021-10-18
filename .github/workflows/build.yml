@@ -5,9 +5,18 @@ on:
 jobs:
   login:
     runs-on: ubuntu-latest
+    container: golang:latest
     steps:
-      -
-        name: Login to Docker Hub
+      - name: setup docker
+        uses: docker-practice/actions-setup-docker@master
+
+      - name: test docker
+        run: |
+          set -x
+          docker version
+          docker run --rm hello-world
+
+      - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_LOGIN }}
@@ -17,3 +26,4 @@ jobs:
         run: |
           apt-get update
           apt-get install -y postgresql-client
+
