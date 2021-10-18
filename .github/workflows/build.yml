@@ -1,0 +1,57 @@
+name: build
+
+on:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - 'v*'
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: golang:latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: /__w/prest/prest
+    env:
+      PREST_PG_HOST: postgres
+      PREST_PG_DATABASE: prest-test
+      PREST_PG_USER: postgres
+      PREST_PG_PASS: postgres
+      PREST_PG_PORT: 5432
+      PREST_SSL_MODE: disable
+      PREST_CONF: /__w/prest/prest/testdata/prest.toml
+      PREST_MIGRATIONS: /__w/prest/prest/testdata/migrations
+      PREST_QUERIES_LOCATION: /__w/prest/prest/testdata/queries
+      BE_CRASHER: 1
+      DOCKER_CLI_EXPERIMENTAL: "enabled"
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: prest-test
+          POSTGRES_PORT: 5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_LOGIN }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_TOKEN }}
