@@ -4,11 +4,28 @@ on:
 
 jobs:
   login:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     container: golang:latest
     steps:
+        
+      - name: setup sudo
+        run: apt update && apt install sudo lsb-release -y
+
       - name: setup docker
-        uses: docker-practice/actions-setup-docker@master
+        run: |
+          apt install apt-transport-https ca-certificates curl software-properties-common -y
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+
+      - name: setup docker2
+        run: |
+          apt update
+      - name: setup docker3
+        run: |
+          apt-cache policy docker-ce
+      - name: setup docker4
+        run: |
+          sudo apt install docker-ce -y
 
       - name: test docker
         run: |
