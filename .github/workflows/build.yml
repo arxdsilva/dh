@@ -16,22 +16,12 @@ jobs:
           apt install apt-transport-https ca-certificates curl software-properties-common -y
           curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
           sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-
-      - name: setup docker2
-        run: |
           apt update
-      - name: setup docker3
-        run: |
           apt-cache policy docker-ce
-      - name: setup docker4
-        run: |
           sudo apt install docker-ce -y
 
       - name: test docker
-        run: |
-          set -x
-          docker version
-          docker run --rm hello-world
+        run: docker version
 
       - name: Login to Docker Hub
         uses: docker/login-action@v1
